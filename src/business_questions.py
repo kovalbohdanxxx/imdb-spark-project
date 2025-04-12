@@ -1,6 +1,16 @@
-def get_movies_available_in_ukrainian():
-	# Get all movies that are available in the Ukrainian language.
-	pass
+from pyspark.sql.functions import col # type: ignore
+
+def get_movies_available_in_ukrainian(title_akas_df):
+	"""
+	Get all movies that are available in the Ukrainian language.
+	"""
+	# Filter the DataFrame to get all movies available in Ukrainian
+	ukrainian_movies_df = title_akas_df.filter(col("language") == "uk")
+
+	# Select relevant columns
+	ukrainian_movies_df = ukrainian_movies_df.select("titleId", "title", "language", "isOriginalTitle")
+
+	return ukrainian_movies_df
 
 def get_average_rating_by_genre():
 	# Get the average rating for each movie genre.
