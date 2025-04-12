@@ -12,4 +12,4 @@ RUN pip --no-cache-dir install pyspark==${PYSPARK_VERSION}
 
 COPY . .
 
-CMD python main.py
+CMD python ./src/main.py
