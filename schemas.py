@@ -1,4 +1,4 @@
-from pyspark.sql.types import StructType, StructField, StringType, IntegerType, BooleanType, DoubleType # type: ignore
+from pyspark.sql.types import StructType, StructField, StringType, IntegerType, DoubleType # type: ignore
 
 def get_name_basics_schema():
 	name_basics_schema = StructType([
@@ -30,7 +30,7 @@ def get_title_basics_schema():
 		StructField("titleType", StringType(), True),      # type/format of the title (e.g., movie, short, etc.)
 		StructField("primaryTitle", StringType(), True),   # more popular title or title used in promotion
 		StructField("originalTitle", StringType(), True),  # original title in the original language
-		StructField("isAdult", BooleanType(), True),       # 0: non-adult title; 1: adult title
+		StructField("isAdult", IntegerType(), True),       # 0: non-adult title; 1: adult title
 		StructField("startYear", StringType(), True),      # release year or start year for TV Series
 		StructField("endYear", StringType(), True),        # end year for TV Series, '\N' for other titles
 		StructField("runtimeMinutes", StringType(), True), # runtime of the title in minutes
