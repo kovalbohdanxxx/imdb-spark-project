@@ -9,6 +9,7 @@ spark = SparkSession.builder.appName("IMDbDataAnalysis").getOrCreate()
 title_akas_df = load_title_akas(spark)
 title_basics_df = load_title_basics(spark)
 title_ratings_df = load_title_ratings(spark)
+title_episode_df = load_title_episode(spark)
 
 # Get all movies that are available in the Ukrainian language.
 ukrainian_movies = get_movies_available_in_ukrainian(title_akas_df)
@@ -37,6 +38,10 @@ movie_count_by_genre_after_2010.show(10, truncate=False)
 # Get most voted movies for each year
 most_voted_movies_for_each_year = get_most_voted_movie_by_year(title_basics_df, title_ratings_df)
 most_voted_movies_for_each_year.show(10, truncate=False)
+
+# Get tv series with the most episodes
+top_tv_series_by_episodes = get_top_tv_series_by_episodes(title_basics_df, title_episode_df)
+top_tv_series_by_episodes.show(100)
 
 # sudo docker build -t imdb-spark-img .
 # sudo docker run -v /home/kovalbohdanxxx/usr/university/subjects/BigData/data:/data imdb-spark-img

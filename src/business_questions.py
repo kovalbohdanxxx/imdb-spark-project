@@ -1,4 +1,4 @@
-from pyspark.sql.functions import col, avg, array_contains, explode, row_number # type: ignore
+from pyspark.sql.functions import col, count, avg, explode, row_number, array_contains # type: ignore
 from pyspark.sql.window import Window # type: ignore
 
 def get_movies_available_in_ukrainian(title_akas_df):
@@ -156,5 +156,34 @@ def get_most_voted_movie_by_year(title_basics_df, title_ratings_df):
 	result_df = top_movies_df.select(
 		"primaryTitle", "startYear", "numVotes"
 	).orderBy("startYear")
+
+	return result_df
+
+def get_top_tv_series_by_episodes(title_basics_df, title_episode_df):
+	"""
+	Get the top 100 TV Series with the most episodes.
+	"""
+	# Filter only TV Series from title_basics_df
+	tv_series_df = title_basics_df.filter(col("titleType") == "tvSeries")
+
+	# Join title_basics with title_episode on parentTconst
+	tv_series_with_episodes_df = title_episode_df.join(
+		tv_series_df, title_episode_df["parentTconst"] == tv_series_df["tconst"]
+	)
+
+	# Count the number of episodes for each TV Series
+	episodes_count_df = tv_series_with_episodes_df.groupBy("parentTconst").agg(
+		count(title_episode_df["tconst"]).alias("numEpisodes")  # Specify tconst from title_episode_df
+	)
+
+	# Join with title_basics_df to get the primary title (name of the TV Series)
+	final_df = episodes_count_df.join(
+		tv_series_df, episodes_count_df["parentTconst"] == tv_series_df["tconst"]
+	)
+
+	# Select relevant columns and order by the number of episodes in descending order
+	result_df = final_df.select("primaryTitle", "numEpisodes") \
+						.orderBy(col("numEpisodes").desc()) \
+						.limit(100)
 
 	return result_df
