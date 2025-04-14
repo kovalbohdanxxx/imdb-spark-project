@@ -28,9 +28,31 @@ def get_most_popular_actors():
 	# Get the most popular actors based on the number of movies they have been in (with more than 10 movies).
 	pass
 
-def get_top_rated_movies():
-	# Get a list of movies where the average rating is greater than 7 and the number of votes exceeds 5000.
-	pass
+def get_top_rated_movies(title_basics_df, title_ratings_df):
+	"""
+	Get a list of movies where the average rating is greater than 7
+	and the number of votes exceeds 5000.
+	"""
+	# Join movie information with ratings data on 'tconst'
+	movies_with_ratings_df = title_basics_df.join(
+		title_ratings_df,
+		title_basics_df["tconst"] == title_ratings_df["tconst"],
+		how="inner"
+	)
+
+	# Filter for movies with an average rating greater than 7 and more than 5000 votes
+	top_rated_movies_df = movies_with_ratings_df.filter(
+		(col("titleType") == "movie") &
+		(col("averageRating") > 7) &
+		(col("numVotes") > 5000)
+	)
+
+	# Select relevant columns to display
+	result_df = top_rated_movies_df.select(
+		"primaryTitle", "startYear", "averageRating", "numVotes"
+	)
+
+	return result_df
 
 def get_high_rated_movies(title_basics_df, title_ratings_df):
 	"""
