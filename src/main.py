@@ -26,6 +26,9 @@ top_rated_movies.show(10, truncate=False)
 high_rated_movies = get_high_rated_movies(load_title_basics(spark), load_title_ratings(spark))
 high_rated_movies.show(10, truncate=False)
 
+movie_count_by_genre_after_2010 = get_movie_count_by_genre_in_year(load_title_basics(spark))
+movie_count_by_genre_after_2010.show(10)
+
 # Get most voted movies for each year
 most_voted_movies_for_each_year = get_most_voted_movie_by_year(load_title_basics(spark), load_title_ratings(spark))
 most_voted_movies_for_each_year.show(100)

@@ -62,14 +62,6 @@ def get_top_action_movies(title_basics_df, title_ratings_df):
 
 	return result_df
 
-def get_movie_count_by_director():
-	# Get the count of movies for each director.
-	pass
-
-def get_most_popular_actors():
-	# Get the most popular actors based on the number of movies they have been in (with more than 10 movies).
-	pass
-
 def get_top_rated_movies(title_basics_df, title_ratings_df):
 	"""
 	Get a list of movies where the average rating is greater than 7
@@ -120,9 +112,23 @@ def get_high_rated_movies(title_basics_df, title_ratings_df):
 
 	return result_df
 
-def get_movie_count_by_genre_in_year():
-	# Count the number of movies released in or after 2010, grouped by genre.
-	pass
+def get_movie_count_by_genre_in_year(title_basics_df):
+	"""
+	Count the number of movies released in or after 2010, grouped by genre.
+	"""
+	# Filter movies released in or after 2010
+	filtered_movies_df = title_basics_df.filter(title_basics_df["startYear"] >= 2010)
+
+	# Explode the genres column to separate each genre into a new row
+	movies_with_genres_df = filtered_movies_df.withColumn("genre", explode(col("genres")))
+
+	# Group by genre and count the number of movies
+	genre_movie_count_df = movies_with_genres_df.groupBy("genre").count()
+
+	# Order by movie count descending
+	result_df = genre_movie_count_df.orderBy(col("count").desc())
+
+	return result_df
 
 def get_most_voted_movie_by_year(title_basics_df, title_ratings_df):
 	"""
