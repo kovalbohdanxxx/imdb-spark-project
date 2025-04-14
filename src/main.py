@@ -10,6 +10,9 @@ spark = SparkSession.builder.appName("IMDbDataAnalysis").getOrCreate()
 ukrainian_movies = get_movies_available_in_ukrainian(load_title_akas(spark))
 ukrainian_movies.show(10, truncate=False)
 
+top_action_movies = get_top_action_movies(load_title_basics(spark), load_title_ratings(spark))
+top_action_movies.show(10, truncate=False)
+
 # Get a list of movies where the average rating is greater than 7 and the number of votes exceeds 5000.
 top_rated_movies= get_top_rated_movies(load_title_basics(spark), load_title_ratings(spark))
 top_rated_movies.show(10, truncate=False)

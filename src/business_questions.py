@@ -1,4 +1,4 @@
-from pyspark.sql.functions import col # type: ignore
+from pyspark.sql.functions import col, array_contains # type: ignore
 
 def get_movies_available_in_ukrainian(title_akas_df):
 	"""
@@ -16,9 +16,29 @@ def get_average_rating_by_genre():
 	# Get the average rating for each movie genre.
 	pass
 
-def get_top_action_movies():
-	# Get movies with more than 100,000 votes that belong to the "Action" genre.
-	pass
+def get_top_action_movies(title_basics_df, title_ratings_df):
+	"""
+	Get movies with more than 100,000 votes that belong to the "Action" genre.
+	"""
+	# Join title basics with ratings data on 'tconst'
+	movies_with_ratings_df = title_basics_df.join(
+		title_ratings_df,
+		title_basics_df["tconst"] == title_ratings_df["tconst"],
+		how="inner"
+	)
+
+	# Filter for movies with more than 100,000 votes and genre including "Action"
+	top_action_movies_df = movies_with_ratings_df.filter(
+		(col("numVotes") > 100000) &
+		array_contains(col("genres"), "Action")
+	)
+
+	# Select relevant columns: movie title, genre, and number of votes
+	result_df = top_action_movies_df.select(
+		"primaryTitle", "genres", "numVotes"
+	).orderBy(col("numVotes").desc())
+
+	return result_df
 
 def get_movie_count_by_director():
 	# Get the count of movies for each director.

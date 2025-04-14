@@ -5,7 +5,7 @@ from pyspark.sql.functions import split # type: ignore
 
 from schemas import *
 
-def load_name_basic(spark, path_to_file='/data/name.basics.tsv'):
+def load_name_basics(spark, path_to_file='/data/name.basics.tsv'):
 	if not os.path.exists(path_to_file):
 		raise FileNotFoundError(f"The file at {path_to_file} was not found.")
 
