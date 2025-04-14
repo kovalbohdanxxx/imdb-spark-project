@@ -1,7 +1,7 @@
 import os
 
 from pyspark.sql.types import BooleanType # type: ignore
-from pyspark.sql.functions import split # type: ignore
+from pyspark.sql.functions import split   # type: ignore
 
 from schemas import *
 

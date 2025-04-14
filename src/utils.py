@@ -1,29 +1,26 @@
+from cfg import YELLOW, RESET, SHOW_LIMIT, DISPLAY_DATAFRAME_INFO_LINE_LENGTH
+
 def display_dataframe_info(df):
-	GREEN = "\033[32m"
-	RESET = "\033[0m"
-	LINE_LENGTH = 55
+	def print_section(title):
+		print(f"{YELLOW}{'=' * DISPLAY_DATAFRAME_INFO_LINE_LENGTH}")
+		print(title)
+		print(f"{'=' * DISPLAY_DATAFRAME_INFO_LINE_LENGTH}{RESET}")
 
-	print(f"{GREEN}{'='*LINE_LENGTH}")
-	print(f"DataFrame Overview")
-	print(f"{'='*LINE_LENGTH}{RESET}")
-	print(f"{GREEN}Number of rows: {df.count():,}")
-	print(f"Number of columns: {len(df.columns)}")
-	print(f"{'='*LINE_LENGTH}{RESET}")
+	print_section("DataFrame Overview")
+	print(f"{YELLOW}Number of rows: {df.count():,}")
+	print(f"Number of columns: {len(df.columns)}{RESET}")
 
-	print(f"{GREEN}First 5 rows:")
-	df.show(5, truncate=False)
-	print(f"{'='*LINE_LENGTH}{RESET}")
+	print_section("First 10 Rows")
+	df.show(SHOW_LIMIT, truncate=False)
 
-	print(f"{GREEN}Schema:")
+	print_section("Schema")
 	df.printSchema()
-	print(f"{'='*LINE_LENGTH}{RESET}")
 
-	print(f"{GREEN}Summary statistics for numeric columns:")
+	print_section("Summary Statistics")
 	df.describe().show(truncate=False)
-	print(f"{'='*LINE_LENGTH}{RESET}")
 
-	print(f"{GREEN}Unique values count for each column:")
+	print_section("Unique Values Count")
 	for column in df.columns:
 		unique_count = df.select(column).distinct().count()
-		print(f"{column: <20}: {unique_count:,} unique values")
-	print(f"{'='*LINE_LENGTH}{RESET}")
+		print(f"{column:<20}: {unique_count:,} unique values")
+	print(f"{YELLOW}{'=' * DISPLAY_DATAFRAME_INFO_LINE_LENGTH}{RESET}")
