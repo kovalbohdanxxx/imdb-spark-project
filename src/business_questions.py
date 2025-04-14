@@ -32,9 +32,29 @@ def get_top_rated_movies():
 	# Get a list of movies where the average rating is greater than 7 and the number of votes exceeds 5000.
 	pass
 
-def get_high_rated_movies():
-	# Join movie data and ratings data to find movies with a rating above 8.
-	pass
+def get_high_rated_movies(title_basics_df, title_ratings_df):
+	"""
+	Join movie data and ratings data to find movies with a rating above 8.
+	"""
+	# Join movie information with ratings data on 'tconst'
+	movies_with_ratings_df = title_basics_df.join(
+		title_ratings_df,
+		title_basics_df["tconst"] == title_ratings_df["tconst"],
+		how="inner"
+	)
+
+	# Filter for movies with an average rating greater than 8
+	high_rated_movies_df = movies_with_ratings_df.filter(
+		(col("titleType") == "movie") &
+		(col("averageRating") > 8)
+	)
+
+	# Select relevant columns to display
+	result_df = high_rated_movies_df.select(
+		"primaryTitle", "startYear", "averageRating"
+	)
+
+	return result_df
 
 def get_movie_count_by_genre_in_year():
 	# Count the number of movies released in or after 2010, grouped by genre.
