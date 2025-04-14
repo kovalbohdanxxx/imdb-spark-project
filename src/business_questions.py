@@ -1,4 +1,4 @@
-from pyspark.sql.functions import col, array_contains # type: ignore
+from pyspark.sql.functions import col, avg, array_contains, explode # type: ignore
 
 def get_movies_available_in_ukrainian(title_akas_df):
 	"""
@@ -12,9 +12,30 @@ def get_movies_available_in_ukrainian(title_akas_df):
 
 	return ukrainian_movies_df
 
-def get_average_rating_by_genre():
-	# Get the average rating for each movie genre.
-	pass
+def get_average_rating_by_genre(title_basics_df, title_ratings_df):
+	"""
+	Get the average rating for each movie genre.
+	"""
+	# Join title basics with ratings data on 'tconst'
+	movies_with_ratings_df = title_basics_df.join(
+		title_ratings_df,
+		title_basics_df["tconst"] == title_ratings_df["tconst"],
+		how="inner"
+	)
+
+	# Explode the genres column to separate each genre into a new row
+	movies_with_genres_df = movies_with_ratings_df.withColumn("genre", explode(col("genres")))
+	movies_with_genres_df = movies_with_genres_df.repartition(100)
+
+	# Group by genre and calculate the average rating
+	average_rating_by_genre_df = movies_with_genres_df.groupBy("genre").agg(
+		avg("averageRating").alias("averageRating")
+	)
+
+	# Order by average rating descending
+	result_df = average_rating_by_genre_df.orderBy(col("averageRating").desc())
+
+	return result_df
 
 def get_top_action_movies(title_basics_df, title_ratings_df):
 	"""

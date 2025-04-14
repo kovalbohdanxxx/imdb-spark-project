@@ -10,6 +10,11 @@ spark = SparkSession.builder.appName("IMDbDataAnalysis").getOrCreate()
 ukrainian_movies = get_movies_available_in_ukrainian(load_title_akas(spark))
 ukrainian_movies.show(10, truncate=False)
 
+# Get the average rating for each movie genre.
+average_rating_by_genre = get_average_rating_by_genre(load_title_basics(spark), load_title_ratings(spark))
+average_rating_by_genre.show()
+
+# Get movies with more than 100,000 votes that belong to the "Action" genre.
 top_action_movies = get_top_action_movies(load_title_basics(spark), load_title_ratings(spark))
 top_action_movies.show(10, truncate=False)
 
