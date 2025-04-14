@@ -125,30 +125,30 @@ def get_movie_count_by_genre_in_year():
 	pass
 
 def get_most_voted_movie_by_year(title_basics_df, title_ratings_df):
-    """
-    Find the movie with the most votes for each year using window functions.
-    """
-    # Join title basics with ratings data on 'tconst'
-    movies_with_ratings_df = title_basics_df.join(
-        title_ratings_df,
-        title_basics_df["tconst"] == title_ratings_df["tconst"],
-        how="inner"
-    )
+	"""
+	Find the movie with the most votes for each year using window functions.
+	"""
+	# Join title basics with ratings data on 'tconst'
+	movies_with_ratings_df = title_basics_df.join(
+		title_ratings_df,
+		title_basics_df["tconst"] == title_ratings_df["tconst"],
+		how="inner"
+	)
 
-    # Create a window specification for partitioning by year and ordering by numVotes in descending order
-    window_spec = Window.partitionBy("startYear").orderBy(col("numVotes").desc())
+	# Create a window specification for partitioning by year and ordering by numVotes in descending order
+	window_spec = Window.partitionBy("startYear").orderBy(col("numVotes").desc())
 
-    # Add a rank column to identify the top movie for each year
-    ranked_movies_df = movies_with_ratings_df.withColumn(
-        "rank", row_number().over(window_spec)
-    )
+	# Add a rank column to identify the top movie for each year
+	ranked_movies_df = movies_with_ratings_df.withColumn(
+		"rank", row_number().over(window_spec)
+	)
 
-    # Filter to keep only the top-ranked movie for each year
-    top_movies_df = ranked_movies_df.filter(col("rank") == 1)
+	# Filter to keep only the top-ranked movie for each year
+	top_movies_df = ranked_movies_df.filter(col("rank") == 1)
 
-    # Select relevant columns (movie title, year, number of votes)
-    result_df = top_movies_df.select(
-        "primaryTitle", "startYear", "numVotes"
-    ).orderBy("startYear")
+	# Select relevant columns (movie title, year, number of votes)
+	result_df = top_movies_df.select(
+		"primaryTitle", "startYear", "numVotes"
+	).orderBy("startYear")
 
-    return result_df
+	return result_df
